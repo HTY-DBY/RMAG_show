@@ -26,7 +26,8 @@ export default defineConfig(({mode}: ConfigEnv): UserConfig => {
     // const viteEnv = wrapperEnv(env)
 
     return {
-        base: env.VITE_PUBLIC_PATH,
+        base: '/RMAG_show/',
+        // base: env.VITE_PUBLIC_PATH,
         plugins: [vue()],
         resolve: {
             alias: {
