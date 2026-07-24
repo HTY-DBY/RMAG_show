@@ -1,2 +1,2 @@
-# RMAG_show
-RMAG_show
+# 重要的
+项目地址：https://hty-dby.github.io/RMAG_show

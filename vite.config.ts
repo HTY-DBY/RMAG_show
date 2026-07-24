@@ -2,7 +2,6 @@ import {fileURLToPath, URL} from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import {resolve} from 'path'
 import {defineConfig, loadEnv, ConfigEnv, UserConfig} from 'vite'
 // @ts-ignore
 // import {wrapperEnv} from './build'
@@ -19,16 +18,19 @@ import {defineConfig, loadEnv, ConfigEnv, UserConfig} from 'vite'
 //         },
 //     },
 // })
-// https://vitejs.dev/config/
+
+// https://www.cnblogs.com/weizwz/p/18411342
 export default defineConfig(({mode}: ConfigEnv): UserConfig => {
     const root = process.cwd()
     const env = loadEnv(mode, root)
     // const viteEnv = wrapperEnv(env)
-
     return {
         base: '/RMAG_show/',
         // base: env.VITE_PUBLIC_PATH,
-        plugins: [vue()],
+        plugins: [
+            vue(),
+            vueDevTools(),
+        ],
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -36,16 +38,8 @@ export default defineConfig(({mode}: ConfigEnv): UserConfig => {
         },
         server: {
             host: '0.0.0.0',
-            port: Number(env.VITE_PORT) || 3000,
+            port: Number(env.VITE_PORT) || 3333,
             open: true,
-            // 本地跨域代理 https://cn.vitejs.dev/config/server-options.html#server-proxy
-            // proxy: {
-            //     '^/api': {
-            //         target: 'http://192.168.1.4:8688',
-            //         changeOrigin: true,
-            //         rewrite: (path) => path.replace(/^\/api/, '')
-            //     }
-            // }
         }
     }
 })
