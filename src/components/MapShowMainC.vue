@@ -107,16 +107,16 @@ const initMap = () => {
 
   const clickPopup = L.popup()
 
-  function onMapClick(e) {
-    const lat = e.latlng.lat.toFixed(6)
-    const lng = e.latlng.lng.toFixed(6)
-    clickPopup
-        .setLatLng(e.latlng)
-        .setContent(`You clicked is<br>${lat}, ${lng}`)
-        .openOn(map)
-  }
+  // function onMapClick(e) {
+  //   const lat = e.latlng.lat.toFixed(6)
+  //   const lng = e.latlng.lng.toFixed(6)
+  //   clickPopup
+  //       .setLatLng(e.latlng)
+  //       .setContent(`You clicked is<br>${lat}, ${lng}`)
+  //       .openOn(map)
+  // }
 
-  map.on('click', onMapClick)
+  // map.on('click', onMapClick)
 
   // ========== 拖动/缩放结束自动保存视角 ==========
   map.on('moveend', () => {

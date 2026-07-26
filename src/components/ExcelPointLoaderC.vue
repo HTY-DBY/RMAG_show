@@ -1,43 +1,43 @@
 <template>
   <div class="excel-container pa-4">
     <div class="tool-bar mb-4 d-flex align-center gap-4">
-      <h5 class="mb-0">总数量：{{ excelStore.pointList.length }}</h5>
+      <h5 class="mb-0">总数量：{{ excelStore.pointList?.length || 0 }}</h5>
       <div v-if="excelStore.errMsg" class="error-text">{{ excelStore.errMsg }}</div>
     </div>
 
-    <!-- 滚动容器核心 -->
     <div class="table-scroll-wrap">
-      <v-table density="compact">
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>SRR_ID_Link</th>
-          <th>BioProject_ID</th>
-          <th>经度 Lng</th>
-          <th>经度 Lng</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr
-            v-for="item in excelStore.pointList"
-            :key="item.ID"
-            @click="excelStore.setSelectPoint(item)"
-            :class="{
-              'selected-row': excelStore.selectPoint?.ID === item.ID
-            }"
-        >
-          <td>{{ item.ID }}</td>
-          <td>{{ item.SRR_ID_Link }}</td>
-          <td>{{ item.BioProject_ID }}</td>
-          <td>{{ item.lat }}</td>
-          <td>{{ item.lng }}</td>
-        </tr>
-        </tbody>
-      </v-table>
+      <q-table
+          dense
+          :rows="excelStore.pointList || []"
+          row-key="ID"
+      >
+        <template #header>
+          <q-tr>
+            <q-th>ID</q-th>
+            <q-th>SRR_ID_Link</q-th>
+            <q-th>BioProject_ID</q-th>
+            <q-th>纬度 Lat</q-th>
+            <q-th>经度 Lng</q-th>
+          </q-tr>
+        </template>
+
+        <template #body="props">
+          <q-tr
+              :props="props"
+              @click="excelStore.setSelectPoint(props.row)"
+              :class="{ 'selected-row': excelStore.selectPoint?.ID === props.row.ID }"
+          >
+            <q-td>{{ props.row.ID }}</q-td>
+            <q-td>{{ props.row.SRR_ID_Link }}</q-td>
+            <q-td>{{ props.row.BioProject_ID }}</q-td>
+            <q-td>{{ props.row.lat }}</q-td>
+            <q-td>{{ props.row.lng }}</q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </div>
 
-    <!-- 空数据提示 -->
-    <div v-if="excelStore.pointList.length === 0" class="empty-tip mt-6 text-center">
+    <div v-if="(excelStore.pointList || []).length === 0" class="empty-tip mt-6 text-center">
       暂无点位数据
     </div>
   </div>
@@ -56,7 +56,6 @@ onMounted(() => {
 onUnmounted(() => {
   excelStore.clearTimer()
 })
-
 </script>
 
 <style scoped lang="scss">
@@ -74,18 +73,17 @@ onUnmounted(() => {
   color: #f53f3f;
 }
 
-// 关键：滚动容器
 .table-scroll-wrap {
   height: calc(100% - 80px);
   overflow-y: auto;
 }
 
-:deep(tbody tr) {
+:deep(.q-table tbody tr) {
   cursor: pointer;
 }
 
-:deep(tbody tr:hover) {
-  background: #dcfbda !important;
+:deep(.q-table tbody tr:hover) {
+  background: #dcfbda;
 }
 
 :deep(.selected-row) {

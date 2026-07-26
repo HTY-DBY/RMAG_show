@@ -1,106 +1,43 @@
 <template>
-  <div class="MainBox">
+  <div>
     <!-- ====== 新增加载提示 ====== -->
     <div v-if="excelStore.loading" class="loading-tip">
       <span>Data loading...</span>
     </div>
+    <q-splitter v-model="splitterModel_1" class="MainBox" :limits="[1, 99]">
+      <template v-slot:before>
+        <!-- 左侧菜单 -->
 
-    <!-- 左侧菜单 -->
-
-
-    <div class="left_panel">
-      <v-card flat>
-        <v-layout>
-          <v-navigation-drawer expand-on-hover permanent
-          >
-            <v-list density="compact" nav>
-              <v-list-item
-                  v-for="item in menuList"
-                  :key="item.key"
-                  :title="item.title"
-                  :active="activeMenu === item.key"
-                  @click="handleMenuChange(item.key)"
-              />
-            </v-list>
-            <v-divider></v-divider>
-
-            <template #append>
-              <div class="d-flex align-center justify-between">
-                <v-list>
-                  <v-list-item subtitle="subtitle@gmail" title="title"/>
-                </v-list>
-                <v-icon-btn icon="mdi-cog-outline" size="default"/>
-              </div>
+        <q-tabs v-model="activeMenu" vertical>
+          <q-tab no-caps
+                 v-for="item in menuList"
+                 :key="item.key"
+                 :name="item.key"
+                 :label="item.title"
+                 @click="handleMenuChange(item.key)"
+          />
+        </q-tabs>
+      </template>
+      <!--###-->
+      <template v-slot:after>
+        <!--         右侧动态组件，不加key，保留组件状态 -->
+        <div class="AllBox">
+          <q-splitter v-model="splitterModel_2" class="AllBox" :limits="[1, 99]">
+            <template v-slot:before>
+              xxx
             </template>
-          </v-navigation-drawer>
-        </v-layout>
-      </v-card>
-    </div>
+            <template v-slot:after class="MainBox">
+              <component :is="currentView"/>
+            </template>
+          </q-splitter>
+        </div>
+      </template>
+    </q-splitter>
 
-    <!-- 右侧动态组件，不加key，保留组件状态 -->
-    <div class="right_panel">
-      <component :is="currentView"/>
-    </div>
   </div>
+
 </template>
 
-<style lang="scss" scoped>
-.loading-tip {
-  position: fixed;
-  z-index: 9999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.94);
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  font-size: 24px;
-  pointer-events: none;
-}
-
-.MainBox {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-/* 删掉 left_panel 的 width/fixed，抽屉自己控制尺寸 */
-.left_panel {
-  // 清空定位样式
-}
-
-:deep(.v-navigation-drawer) {
-  width: 180px !important;
-}
-
-.right_panel {
-  position: fixed;
-  top: 0;
-  left: 180px; // 和抽屉宽度保持一致
-  right: 0; /* 右边自动贴边界，自动填满！不需要calc */
-  height: 100vh;
-  box-sizing: border-box;
-}
-
-:deep(.v-navigation-drawer__append) {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-}
-
-:deep(.v-list-item-subtitle) {
-  line-height: 2rem;
-}
-
-:deep(.leaflet-popup-content-wrapper) {
-  font-size: 16px;
-}
-</style>
 
 <script setup lang="ts">
 
@@ -115,13 +52,13 @@ import MapShowMainC from "@/components/MapShowMainC.vue"
 import {useExcelStore} from '@/stores/excelFunction'
 
 const excelStore = useExcelStore()
-
+const tab = ref('mails')
+const splitterModel_1 = ref(10)
+const splitterModel_2 = ref(30)
 // ============ 统一配置中心 ============
 const menuList = [
   {
-    title: "Map show",
-    key: "MapShowMainC",
-    component: MapShowMainC
+    title: "Map show", key: "MapShowMainC", component: MapShowMainC
   },
   {
     title: "Test 1",
@@ -227,3 +164,48 @@ onMounted(async () => {
   await excelStore.refreshExcel()
 })
 </script>
+
+
+<style lang="scss" scoped>
+.loading-tip {
+  position: fixed;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  font-size: 24px;
+  pointer-events: none;
+}
+
+.MainBox {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.AllBox {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* 删掉 left_panel 的 width/fixed，抽屉自己控制尺寸 */
+.left_panel {
+
+}
+
+.right_panel {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+
+</style>
