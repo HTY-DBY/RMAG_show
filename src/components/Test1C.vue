@@ -1,13 +1,20 @@
 <template>
   <div class="test1-container pa-6">
     <!-- 测试按钮 -->
-    <v-btn color="primary" @click="handlePrintStoreData">
+    <v-btn @click="handlePrintStoreData">
       打印全局点位数据
     </v-btn>
 
-    <v-btn color="success" class="ml-4" @click="handleRefreshExcel" :disabled="excelStore.loading">
+    <v-btn class="ml-4" @click="handleRefreshExcel" :disabled="excelStore.loading">
       {{ excelStore.loading ? "Excel加载中..." : "刷新Excel数据" }}
     </v-btn>
+
+    <!-- Toggle between Light / Dark -->
+    <v-btn class="ml-4"
+           @click="theme.toggle()"
+           text="Toggle Light / Dark"
+    ></v-btn>
+
 
     <div v-if="excelStore.errMsg" class="mt-4 text-red-500">
       错误信息：{{ excelStore.errMsg }}
@@ -18,9 +25,10 @@
 <script setup lang="ts">
 import {useExcelStore} from '@/stores/excelFunction'
 
-// 获取pinia仓库实例
-const excelStore = useExcelStore()
+const excelStore = useExcelStore()// 获取pinia仓库实例
+import {useTheme} from 'vuetify'
 
+const theme = useTheme()
 /**
  * 测试：控制台打印所有点位
  */

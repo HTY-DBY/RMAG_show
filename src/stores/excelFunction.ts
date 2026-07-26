@@ -51,7 +51,7 @@ export const useExcelStore = defineStore('excel', {
                 console.log('请求地址为', url)
                 const res = await fetch(url, {cache: "no-cache"});
                 if (!res.ok) throw new Error(`文件请求失败 ${res.status}`);
-                console.log("【进度】文件下载成功");
+                console.log("【进度】文件请求成功");
 
                 const buf = await res.arrayBuffer();
                 console.log("【进度】解析Excel二进制数据");
