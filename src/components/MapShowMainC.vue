@@ -1,5 +1,19 @@
 <template>
-  <div class="thisbox" ref="mapDom"></div>
+  <div class="AllBox">
+    <div class="RootWrap">
+      <!-- 左侧表格区域 -->
+      <div class="LeftPanel">
+        <DataShowC/>
+      </div>
+
+      <!-- 右侧地图区域 -->
+      <div class="RightPanel">
+        <div class="map-container" ref="mapDom"></div>
+      </div>
+    </div>
+  </div>
+
+
 </template>
 
 <script setup>
@@ -13,7 +27,9 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import {useExcelStore} from '@/stores/excelFunction.ts'
+import DataShowC from "@/components/DataShowC.vue";
 
+const splitterModel_2 = ref(30)
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -178,9 +194,33 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-.thisbox {
+
+.RootWrap {
+  display: flex;
+  width: 100%;
+  height: 450px;
+  gap: 10px; // 左右板块间距
+}
+
+// 左侧表格区域
+.LeftPanel {
+  //flex: 0 0 42%; // 固定占比42%，可自由调整
+  width: 350px;
+  height: 100%;
+  overflow: hidden;
+}
+
+// 右侧地图区域
+.RightPanel {
+  width: 400px;
+  height: 450px;
+}
+
+// !重要：leaflet容器必须明确宽高，否则白屏不渲染
+.map-container {
   width: 100%;
   height: 100%;
+  border-radius: 8px;
 }
 
 :deep(.leaflet-popup-content-wrapper) {

@@ -22,14 +22,7 @@
       <template v-slot:after>
         <!--         右侧动态组件，不加key，保留组件状态 -->
         <div class="AllBox">
-          <q-splitter v-model="splitterModel_2" class="AllBox" :limits="[1, 99]">
-            <template v-slot:before>
-              xxx
-            </template>
-            <template v-slot:after class="MainBox">
-              <component :is="currentView"/>
-            </template>
-          </q-splitter>
+          <component :is="currentView"/>
         </div>
       </template>
     </q-splitter>
@@ -44,9 +37,9 @@
 import {ref, computed, watch, onMounted, onUnmounted} from 'vue'
 
 import Test1C from "@/components/Test1C.vue"
-import ContactMain from "@/components/ContactMain.vue"
+import ContactMainC from "@/components/ContactMainC.vue"
 // @ts-ignore
-import ExcelPointLoaderC from "@/components/ExcelPointLoaderC.vue"
+import DataShowC from "@/components/DataShowC.vue"
 // @ts-ignore
 import MapShowMainC from "@/components/MapShowMainC.vue"
 import {useExcelStore} from '@/stores/excelFunction'
@@ -54,36 +47,37 @@ import {useExcelStore} from '@/stores/excelFunction'
 const excelStore = useExcelStore()
 const tab = ref('mails')
 const splitterModel_1 = ref(10)
-const splitterModel_2 = ref(30)
+
 // ============ 统一配置中心 ============
 const menuList = [
   {
     title: "Map show", key: "MapShowMainC", component: MapShowMainC
   },
+
+  // {
+  //   title: "Data show",
+  //   key: "DataShow",
+  //   component: DataShowC
+  // },
+  // {
+  //   title: "BioData show",
+  //   key: "BioDataShow",
+  //   component: Test1C
+  // },
+  // {
+  //   title: "Add data",
+  //   key: "AddData",
+  //   component: Test1C
+  // },
+  {
+    title: "Contact",
+    key: "ContactMainC",
+    component: ContactMainC
+  },
   {
     title: "Test 1",
     key: "Test1C",
     component: Test1C
-  },
-  {
-    title: "Data show",
-    key: "DataShow",
-    component: ExcelPointLoaderC
-  },
-  {
-    title: "BioData show",
-    key: "BioDataShow",
-    component: Test1C
-  },
-  {
-    title: "Add data",
-    key: "AddData",
-    component: Test1C
-  },
-  {
-    title: "Contact",
-    key: "ContactMain",
-    component: ContactMain
   },
 ] as const
 

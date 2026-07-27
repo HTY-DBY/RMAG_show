@@ -7,10 +7,11 @@ import 'vuetify/styles'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
-import {createVuetify} from "vuetify/framework"; // Ensure you are using css-loader
+import {createVuetify} from "vuetify/framework";
 import {createI18n} from 'vue-i18n'
 import 'quasar/src/css/index.sass'
 import {Quasar} from 'quasar'
+import '@quasar/extras/material-icons/material-icons.css'
 
 
 export default createVuetify({
