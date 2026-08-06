@@ -1,183 +1,53 @@
 <template>
-  <div>
-    <!-- ====== 新增加载提示 ====== -->
-    <div v-if="excelStore.loading" class="loading-tip">
-      <span>Data loading...</span>
-    </div>
-    <q-splitter v-model="splitterModel_1" class="MainBox" :limits="[1, 99]">
-      <template v-slot:before>
-        <!-- 左侧菜单 -->
+  <q-splitter class="MainBox" v-model="splitterModel_1" :limits="[1, 99]">
+    <!-- 左侧菜单 -->
+    <template #before>
+      <q-tabs vertical v-model="activeMenu">
+        <q-tab
+            v-for="item in menuList"
+            :key="item.path"
+            :name="item.path"
+            :label="item.title"
+            no-caps
+            @click="$router.push(item.path)"
+        />
+      </q-tabs>
+    </template>
 
-        <q-tabs v-model="activeMenu" vertical>
-          <q-tab no-caps
-                 v-for="item in menuList"
-                 :key="item.key"
-                 :name="item.key"
-                 :label="item.title"
-                 @click="handleMenuChange(item.key)"
-          />
-        </q-tabs>
-      </template>
-      <!--###-->
-      <template v-slot:after>
-        <!--         右侧动态组件，不加key，保留组件状态 -->
-        <div class="AllBox">
-          <component :is="currentView"/>
-        </div>
-      </template>
-    </q-splitter>
+    <!-- 右侧路由区域，KeepAlive缓存页面状态 -->
+    <template #after>
+      <div class="AllBox">
+        <HeadC/>
+        <KeepAlive>
 
-  </div>
-
+          <RouterView/>
+        </KeepAlive>
+      </div>
+    </template>
+  </q-splitter>
 </template>
 
-
 <script setup lang="ts">
+import {ref, computed} from 'vue'
+import {useRoute} from 'vue-router'
+import HeadC from '@/components/HeadC.vue'
 
-import {ref, computed, watch, onMounted, onUnmounted} from 'vue'
+const route = useRoute()
+const splitterModel_1 = ref(8)
 
-import Test1C from "@/components/Test1C.vue"
-import ContactMainC from "@/components/ContactMainC.vue"
-// @ts-ignore
-import DataShowC from "@/components/DataShowC.vue"
-// @ts-ignore
-import MapShowMainC from "@/components/MapShowMainC.vue"
-import {useExcelStore} from '@/stores/excelFunction'
-
-const excelStore = useExcelStore()
-const tab = ref('mails')
-const splitterModel_1 = ref(10)
-
-// ============ 统一配置中心 ============
+// 菜单配置，和子路由path严格对应
 const menuList = [
-  {
-    title: "Map show", key: "MapShowMainC", component: MapShowMainC
-  },
+  {title: 'Map show', path: '/MapShowMainC'},
+  {title: 'Contact', path: '/ContactMainC'},
+  {title: 'Test2C', path: '/Test2C'},
+  {title: 'Test3C', path: '/Test3C'},
+]
 
-  // {
-  //   title: "Data show",
-  //   key: "DataShow",
-  //   component: DataShowC
-  // },
-  // {
-  //   title: "BioData show",
-  //   key: "BioDataShow",
-  //   component: Test1C
-  // },
-  // {
-  //   title: "Add data",
-  //   key: "AddData",
-  //   component: Test1C
-  // },
-  {
-    title: "Contact",
-    key: "ContactMainC",
-    component: ContactMainC
-  },
-  {
-    title: "Test 1",
-    key: "Test1C",
-    component: Test1C
-  },
-] as const
-
-type MenuKey = (typeof menuList)[number]['key']
-const validKeys = new Set<MenuKey>(menuList.map(i => i.key))
-
-// 当前激活菜单
-const activeMenu = ref<MenuKey>('MapShowMainC')
-
-// key -> 组件映射
-const componentMap = computed(() => {
-  return menuList.reduce((res, item) => {
-    res[item.key] = item.component
-    return res
-  }, {} as Record<MenuKey, unknown>)
-})
-const currentView = computed(() => componentMap.value[activeMenu.value])
-
-/**
- * 解析url hash里面的参数 menu=xxx
- */
-function getUrlMenuParam(): string | null {
-  const searchStr = window.location.search
-  const urlParams = new URLSearchParams(searchStr)
-  return urlParams.get('menu')
-}
-
-/**
- * 修改浏览器地址参数，不刷新页面
- */
-function updateUrlParam(key: MenuKey) {
-  const url = new URL(window.location.href)
-  url.searchParams.set('menu', key)
-  // replace：不新增历史记录；想用前进后退改用 pushState
-  history.replaceState({}, '', url.toString())
-}
-
-/**
- * 菜单点击切换
- */
-const handleMenuChange = (val: MenuKey) => {
-  console.log('\n========== 菜单切换日志 ==========')
-  console.log('选中菜单key：', val)
-  console.log('切换前activeMenu：', activeMenu.value)
-
-  activeMenu.value = val
-  updateUrlParam(val)
-
-  console.log('切换完成activeMenu：', activeMenu.value)
-  console.log('==================================\n')
-}
-
-/**
- * 浏览器前进/后退触发，监听popstate事件
- */
-function onPopState() {
-  const param = getUrlMenuParam()
-  if (!param) return
-  const key = param as MenuKey
-  if (validKeys.has(key) && activeMenu.value !== key) {
-    activeMenu.value = key
-  }
-}
-
-// 监听浏览器后退/前进
-window.addEventListener('popstate', onPopState)
-onUnmounted(() => {
-  window.removeEventListener('popstate', onPopState)
-})
-
-// 页面初始化：读取URL参数恢复页面
-onMounted(async () => {
-  const initKey = getUrlMenuParam() as MenuKey
-  if (initKey && validKeys.has(initKey)) {
-    activeMenu.value = initKey
-  }
-  // 初始化加载数据
-  await excelStore.refreshExcel()
-})
+// 路由变化自动高亮左侧菜单
+const activeMenu = computed(() => route.path)
 </script>
 
-
 <style lang="scss" scoped>
-.loading-tip {
-  position: fixed;
-  z-index: 9999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.94);
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  font-size: 24px;
-  pointer-events: none;
-}
-
 .MainBox {
   width: 100vw;
   height: 100vh;
@@ -189,17 +59,4 @@ onMounted(async () => {
   height: 100%;
   position: relative;
 }
-
-/* 删掉 left_panel 的 width/fixed，抽屉自己控制尺寸 */
-.left_panel {
-
-}
-
-.right_panel {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-}
-
-
 </style>

@@ -1,44 +1,42 @@
 <template>
-  <div class="AllBox">
-    <div>
-      <q-input
-          dense outlined
-          v-model="text"
-          placeholder="Search"
-          class="SearchMain"
-      >
-        <template v-slot:append>
-          <q-icon name="search"/>
-        </template>
-      </q-input>
-    </div>
-    <div class="table-scroll-wrap">
-      <q-table
-          selection="single"
-          v-model:selected="selected"
-          dense
-          flat
-          bordered
-          :rows="excelStore.pointList || []"
-          :columns="columns"
-          row-key="ID"
-          :rows-per-page-options="[0]"
-          virtual-scroll
-          class="my-sticky-header-table "
-      >
-        <!--        <div class="q-mt-md"> Selected: {{ JSON.stringify(selected) }}</div>-->
-
-      </q-table>
-    </div>
-    <div v-if="(excelStore.pointList || []).length === 0" class="empty-tip mt-6 text-center">
-      暂无点位数据
-    </div>
+  <div>
+    <q-input
+        dense outlined
+        v-model="text"
+        placeholder="Search"
+        class="q-pa-sm"
+    >
+      <template v-slot:append>
+        <q-icon name="search"/>
+      </template>
+    </q-input>
   </div>
+  <div class="table-scroll-wrap">
+    <q-table
+        selection="single"
+        v-model:selected="selected"
+        dense
+        flat
+        bordered
+        :rows="excelStore.pointList || []"
+        :columns="columns"
+        row-key="ID"
+        :rows-per-page-options="[0]"
+        virtual-scroll
+        class="my-sticky-header-table "
+    >
+
+    </q-table>
+  </div>
+  <div v-if="(excelStore.pointList || []).length === 0" class="empty-tip mt-6 text-center">
+    暂无点位数据
+  </div>
+  <q-btn color="white" text-color="black" label="Standard" class="q-pa-sm"/>
 </template>
 
 <script setup>
 import {onMounted, onUnmounted, computed, ref} from 'vue'
-import {useExcelStore} from '@/stores/excelFunction.ts'
+import {useExcelStore} from '@/Other/excelFunction.ts'
 
 const text = ref('')
 const excelStore = useExcelStore()
@@ -97,15 +95,19 @@ onUnmounted(() => {
 }
 
 .SearchMain {
-  width: 350px;
-  //height: 100%;
-  //width: 100%;
-  padding: 5px 0 5px 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.table-scroll-wrap {
+  /* 根据你的布局设置高度，比如剩余可视高度 70vh / 固定600px */
+  height: 70%;
+  overflow: auto;
 }
 
 .my-sticky-header-table {
-  height: 400px;
-  width: 350px;
+  height: 100%;
+  width: 100%;
   //height: 100%;
   //width: 100%;
   // scoped 穿透选择器 :deep()
@@ -135,11 +137,6 @@ onUnmounted(() => {
   }
 }
 
-.AllBox {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
 
 .selected-row {
   background: #e8f4ff !important;

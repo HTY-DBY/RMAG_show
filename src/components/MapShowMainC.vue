@@ -1,19 +1,11 @@
 <template>
-  <div class="AllBox">
-    <div class="RootWrap">
-      <!-- 左侧表格区域 -->
-      <div class="LeftPanel">
-        <DataShowC/>
-      </div>
-
-      <!-- 右侧地图区域 -->
-      <div class="RightPanel">
-        <div class="map-container" ref="mapDom"></div>
-      </div>
+  <div class="row RootWrap ">
+    <div class="Panel_1 col-3 q-pa-sm">
+      <DataShowC/>
+    </div>
+    <div class="Panel_2 col q-pa-sm" ref="mapDom">
     </div>
   </div>
-
-
 </template>
 
 <script setup>
@@ -26,7 +18,7 @@ import 'leaflet.markercluster'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-import {useExcelStore} from '@/stores/excelFunction.ts'
+import {useExcelStore} from '@/Other/excelFunction.ts'
 import DataShowC from "@/components/DataShowC.vue";
 
 const splitterModel_2 = ref(30)
@@ -196,24 +188,23 @@ onUnmounted(() => {
 <style scoped lang="scss">
 
 .RootWrap {
-  display: flex;
   width: 100%;
-  height: 450px;
-  gap: 10px; // 左右板块间距
+  height: 550px;
 }
 
 // 左侧表格区域
-.LeftPanel {
+.Panel_1 {
   //flex: 0 0 42%; // 固定占比42%，可自由调整
-  width: 350px;
+  width: 32%;
   height: 100%;
   overflow: hidden;
 }
 
+
 // 右侧地图区域
-.RightPanel {
-  width: 400px;
-  height: 450px;
+.Panel_2 {
+  width: 100%;
+  height: 100%;
 }
 
 // !重要：leaflet容器必须明确宽高，否则白屏不渲染

@@ -3,17 +3,23 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed} from 'vue'
+import {computed} from 'vue'
 import {marked} from 'marked'
 import DOMPurify from 'dompurify'
-// ============关键：读取本地md原始文本============
 import contactMd from '@/Other/ContactMain_Markdown.md?raw'
 
-const markdownRaw = ref(contactMd)
+const markdownRaw = contactMd
 
 const renderHtml = computed(() => {
-  const rawHtml = marked.parse(markdownRaw.value) as string
-  return DOMPurify.sanitize(rawHtml)
+  let html = marked.parse(markdownRaw) as string
+  html = DOMPurify.sanitize(html)
+  // 所有http/https外网链接全部新窗口打开
+  html = html.replace(
+      /href="(https?:\/\/[^"]+)"/g,
+      'href="$1" target="_blank" rel="noopener noreferrer"'
+  )
+
+  return html
 })
 </script>
 
@@ -48,7 +54,6 @@ const renderHtml = computed(() => {
     padding: 1px 10px;
     color: #4a5568;
     background: #f7fafc;
-    //margin: 10px 0;
   }
 
   :deep(ul) {

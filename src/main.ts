@@ -12,7 +12,7 @@ import {createI18n} from 'vue-i18n'
 import 'quasar/src/css/index.sass'
 import {Quasar} from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'
-
+import router from './routerMy.ts'
 
 export default createVuetify({
     theme: {
@@ -38,6 +38,7 @@ const vuetify = createVuetify({
 app.use(pinia)
 app.use(vuetify)
 app.use(i18n)
+app.use(router)
 app.use(Quasar, {
     plugins: {}, // import Quasar plugins and add here
 })

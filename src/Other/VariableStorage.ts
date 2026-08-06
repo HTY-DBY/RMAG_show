@@ -1,0 +1,1 @@
+export const BASE_PREFIX = '/RMAG_show/'
