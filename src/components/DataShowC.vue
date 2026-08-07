@@ -1,42 +1,53 @@
 <template>
-  <div class="row">
+  <div class="row row-cols-3">
+    <!--   ////////////////-->
     <div class="col">
-      Data updated on Jnly 20 2001
+      Loding
     </div>
+    <!--   ////////////////-->
     <q-input
         dense outlined
         v-model="text"
         placeholder="Search"
-        class="q-pa-sm search_input  col"
+        class="q-pa-sm  col"
     >
       <template v-slot:append>
         <q-icon name="search"/>
       </template>
     </q-input>
+    <!--   ////////////////-->
+    <div ref="btnWrapRef" style="display: inline-block;" class="col-3 q-pa-sm ">
+      <q-btn
+          label="Details" no-caps color="white" text-color="black" class="width_100"
+          :class="{ 'btn-disabled-style': selected.length === 0 }"
+          @click="handleClickSearch"
+      />
+    </div>
+    <!--   ////////////////-->
   </div>
   <div class="table-scroll-wrap">
     <q-table
         selection="single"
         v-model:selected="selected"
+        :loading="loading"
         dense
         flat
         bordered
-        :rows="excelStore.pointList || []"
+        :rows="tableData"
         :columns="columns"
         row-key="ID"
         :rows-per-page-options="[0]"
         virtual-scroll
-        class="my-sticky-header-table "
+        class="my-sticky-header-table header-purple-style"
     >
-
     </q-table>
   </div>
-  <div v-if="(excelStore.pointList || []).length === 0" class="empty-tip mt-6 text-center">
-    暂无点位数据
+
+  <div class="row">
+    Data was updated on Jnly 20 2001.
   </div>
-  <div class="row q-pa-sm">
-    <q-btn color="white" text-color="black" label="Search" class=""/>
-  </div>
+
+
 </template>
 
 <script setup>
@@ -46,6 +57,25 @@ import {useExcelStore} from '@/Other/excelFunction.ts'
 const text = ref('')
 const excelStore = useExcelStore()
 const selected = ref([])
+const btnWrapRef = ref(null)
+const loading = ref(false)
+
+const originList = computed(() => excelStore.pointList || [])
+
+const tableData = computed(() => {
+  const keyword = text.value.trim().toLowerCase()
+  const source = originList.value
+  if (!keyword) return source
+
+  return source.filter(row => {
+    const searchKeys = ['ID', 'SRR_ID_Link', 'BioProject_ID']
+    return searchKeys.some(field => {
+      const cellText = String(row[field] ?? '').toLowerCase()
+      return cellText.includes(keyword)
+    })
+  })
+})
+
 const columns = [
   {
     name: 'ID',
@@ -68,28 +98,18 @@ const columns = [
     align: 'left',
     sortable: true,
   },
-  // {
-  //   name: 'lat',
-  //   label: 'Latitude',
-  //   field: 'lat',
-  //   align: 'left',
-  //   sortable: true,
-  // },
-  // {
-  //   name: 'lng',
-  //   label: 'Longitude',
-  //   field: 'lng',
-  //   align: 'left',
-  //   sortable: true,
-  // }
 ]
+
+const handleClickSearch = () => {
+  if (selected.value.length === 0) return
+  const row = selected.value[0]
+  console.log('选中的数据：', row)
+}
 
 onMounted(() => {
   excelStore.loadCache()
 })
-
 onUnmounted(() => {
-  excelStore.clearTimer()
 })
 </script>
 
@@ -108,18 +128,19 @@ onUnmounted(() => {
   width: 100%;
 }
 
+.width_100 {
+  width: 100%;
+}
+
 .table-scroll-wrap {
-  /* 根据你的布局设置高度，比如剩余可视高度 70vh / 固定600px */
-  height: 70%;
+  height: 85%;
   overflow: auto;
 }
 
 .my-sticky-header-table {
   height: 100%;
   width: 100%;
-  //height: 100%;
-  //width: 100%;
-  // scoped 穿透选择器 :deep()
+
   :deep() {
     .q-table__top,
     .q-table__bottom,
@@ -136,37 +157,26 @@ onUnmounted(() => {
       top: 0;
     }
 
-    &.q-table--loading thead tr:last-child th {
-      top: 48px;
-    }
-
     tbody {
       scroll-margin-top: 48px;
     }
   }
 }
 
-
-// 自定义输入框高度 + 图标自适应居中
-:deep(.search_input.q-field--dense .q-field__control) {
-  height: 30px !important;
+// 全局修改表头样式：紫色+斜体，代替header插槽
+:deep(.header-purple-style thead th) {
+  //color: purple;
+  //font-style: italic;
+  font-weight: bold;
 }
-
-:deep(.search_input.q-field--dense .q-field__marginal) {
-  height: 30px !important;
-  // 让图标容器撑满高度，内部图标自动居中
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// 图标跟随输入框高度缩放
-:deep(.search_input.q-field--dense .q-field__marginal .q-icon) {
-  font-size: 18px; /* 根据30px高度适配大小 */
-}
-
 
 .selected-row {
   background: #e8f4ff !important;
+}
+
+.btn-disabled-style {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 </style>

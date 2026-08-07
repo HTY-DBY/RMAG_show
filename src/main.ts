@@ -26,7 +26,12 @@ export default createVuetify({
 
 // 创建实例
 const i18n = createI18n({
-    // something vue-i18n options here ...
+    legacy: false, // 关闭传统模式
+    locale: 'zh-CN',
+    messages: {
+        'zh-CN': {},
+        en: {}
+    }
 })
 const pinia = createPinia()
 const app = createApp(App)
@@ -40,6 +45,6 @@ app.use(vuetify)
 app.use(i18n)
 app.use(router)
 app.use(Quasar, {
-    plugins: {}, // import Quasar plugins and add here
+    plugins: {},
 })
 app.mount('#app')

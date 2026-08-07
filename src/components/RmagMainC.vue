@@ -12,7 +12,9 @@
     <div class="Panel_1 col q-pa-sm">
       <TreeWithAbundance @selectSpecies="handleSpeciesClick"/>
     </div>
-
+    <div class="Panel_1 col q-pa-sm">
+      <TreeWithAbundance @selectSpecies="handleSpeciesClick"/>
+    </div>
   </div>
 </template>
 
