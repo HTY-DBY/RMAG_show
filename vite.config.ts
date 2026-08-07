@@ -5,15 +5,14 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import {defineConfig, loadEnv, ConfigEnv, UserConfig} from 'vite'
 import {join} from 'node:path'
 import {BASE_PREFIX} from './src/Other/VariableStorage'
+import {viteSingleFile} from 'vite-plugin-singlefile'
 
-// 配置参考来自  https://www.cnblogs.com/weizwz/p/18411342
 export default defineConfig(({mode}: ConfigEnv): UserConfig => {
     const root = process.cwd()
     const env = loadEnv(mode, root)
-    // const viteEnv = wrapperEnv(env)
+
     return {
         base: BASE_PREFIX,
-        // base: env.VITE_PUBLIC_PATH,
         plugins: [
             vue({
                 template: {transformAssetUrls}
@@ -21,18 +20,28 @@ export default defineConfig(({mode}: ConfigEnv): UserConfig => {
             vueDevTools(),
             quasar({
                 sassVariables: join(import.meta.dirname, 'src/assets/quasar-variables.sass')
+            }),
+            // 【全程生效：开发、打包全都把JS、CSS嵌入html内部】
+            viteSingleFile({
+                useRecommendedBuildConfig: true,
+                deleteInlinedFiles: true
             })
         ],
+
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
             },
         },
+
         server: {
             host: '0.0.0.0',
             port: Number(env.VITE_PORT) || 3333,
             open: true,
         },
 
+        build: {
+            assetsInlineLimit: 50 * 1024 * 1024
+        }
     }
 })
