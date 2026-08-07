@@ -2,7 +2,7 @@
   <q-splitter class="MainBox" v-model="splitterModel_1" :limits="[1, 99]">
     <!-- 左侧菜单 -->
     <template #before>
-      <q-tabs vertical v-model="activeMenu">
+      <q-tabs vertical v-model="activeMenu" animated="false">
         <q-tab
             v-for="item in menuList"
             :key="item.path"
@@ -17,9 +17,9 @@
     <!-- 右侧路由区域，KeepAlive缓存页面状态 -->
     <template #after>
       <div class="AllBox">
-        <HeadC/>
+        <HeadC class="HeadC_style "/>
+        <q-separator/>
         <KeepAlive>
-
           <RouterView/>
         </KeepAlive>
       </div>
@@ -58,5 +58,17 @@ const activeMenu = computed(() => route.path)
   width: 100%;
   height: 100%;
   position: relative;
+}
+
+.HeadC_style {
+
+}
+
+:root {
+  --q-transition-duration: 0s !important;
+}
+
+* {
+  transition: background-color 0s, color 0s, border-color 0s !important;
 }
 </style>

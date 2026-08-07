@@ -1,10 +1,13 @@
 <template>
-  <div>
+  <div class="row">
+    <div class="col">
+      Data updated on Jnly 20 2001
+    </div>
     <q-input
         dense outlined
         v-model="text"
         placeholder="Search"
-        class="q-pa-sm"
+        class="q-pa-sm search_input  col"
     >
       <template v-slot:append>
         <q-icon name="search"/>
@@ -31,7 +34,9 @@
   <div v-if="(excelStore.pointList || []).length === 0" class="empty-tip mt-6 text-center">
     暂无点位数据
   </div>
-  <q-btn color="white" text-color="black" label="Standard" class="q-pa-sm"/>
+  <div class="row q-pa-sm">
+    <q-btn color="white" text-color="black" label="Search" class=""/>
+  </div>
 </template>
 
 <script setup>
@@ -94,6 +99,10 @@ onUnmounted(() => {
   height: 100%;
 }
 
+.search_input {
+  width: 50%;
+}
+
 .SearchMain {
   height: 100%;
   width: 100%;
@@ -135,6 +144,25 @@ onUnmounted(() => {
       scroll-margin-top: 48px;
     }
   }
+}
+
+
+// 自定义输入框高度 + 图标自适应居中
+:deep(.search_input.q-field--dense .q-field__control) {
+  height: 30px !important;
+}
+
+:deep(.search_input.q-field--dense .q-field__marginal) {
+  height: 30px !important;
+  // 让图标容器撑满高度，内部图标自动居中
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 图标跟随输入框高度缩放
+:deep(.search_input.q-field--dense .q-field__marginal .q-icon) {
+  font-size: 18px; /* 根据30px高度适配大小 */
 }
 
 

@@ -1,6 +1,8 @@
+<script setup lang="ts">
+</script>
 <template>
   <div>
-    <q-bar :class="$q.dark.isActive ? 'bg-grey-9 text-white' : 'bg-white text-dark'">
+    <q-bar :class="$q.dark.isActive ? 'bg-grey-9 text-white' : 'bg-white text-dark'" class="">
       <div class=" non-selectable">
         File
         <q-menu>
@@ -69,13 +71,13 @@
         </q-menu>
       </div>
       <q-space/>
-      <q-btn
-          round
-          dense
-          color="blue-4"
-          :icon="$q.dark.isActive ? 'sunny' : 'dark_mode'"
-          @click="$q.dark.toggle()"
-      />
+      <!--      <q-btn-->
+      <!--          round-->
+      <!--          dense-->
+      <!--          color="blue-4"-->
+      <!--          :icon="$q.dark.isActive ? 'sunny' : 'dark_mode'"-->
+      <!--          @click="$q.dark.toggle()"-->
+      <!--      />-->
 
       <!--      <q-btn dense flat icon="minimize"/>-->
       <!--      <q-btn dense flat icon="crop_square"/>-->

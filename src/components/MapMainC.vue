@@ -1,19 +1,13 @@
 <template>
-  <div class="row RootWrap ">
-    <div class="Panel_1 col-3 q-pa-sm">
-      <DataShowC/>
-    </div>
-    <div class="Panel_2 col q-pa-sm" ref="mapDom">
-    </div>
-  </div>
+  <div ref="mapDom" class="map_container"></div>
 </template>
 
 <script setup>
+import L from 'leaflet'
 import {ref, onMounted, onUnmounted, watch, onBeforeUnmount} from 'vue'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-import L from 'leaflet'
 import 'leaflet.markercluster'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -186,29 +180,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-
-.RootWrap {
-  width: 100%;
-  height: 550px;
-}
-
-// 左侧表格区域
-.Panel_1 {
-  //flex: 0 0 42%; // 固定占比42%，可自由调整
-  width: 32%;
-  height: 100%;
-  overflow: hidden;
-}
-
-
-// 右侧地图区域
-.Panel_2 {
-  width: 100%;
-  height: 100%;
-}
-
 // !重要：leaflet容器必须明确宽高，否则白屏不渲染
-.map-container {
+.map_container {
   width: 100%;
   height: 100%;
   border-radius: 8px;
