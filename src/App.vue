@@ -14,23 +14,21 @@
           />
         </q-tabs>
       </template>
-
       <!-- 右侧路由区域，KeepAlive缓存页面状态 -->
       <template #after>
         <div class="AllBox row">
-          <q-separator/>
+
           <router-view v-slot="{ Component }">
             <keep-alive>
               <component :is="Component"/>
             </keep-alive>
           </router-view>
+          <div class=" row">
+            <FooterCC/>
+          </div>
+
         </div>
-        <div class="footer-status-bar row">
-          <div class="status-item">时间：{{ nowTime }}</div>
-          <div class="status-item">IP：{{ clientIp || '获取中...' }}</div>
-          <div class="status-item">设备：{{ deviceInfo }}</div>
-          <div class="status-item">UA：{{ browserUA }}</div>
-        </div>
+
       </template>
       <!-- 底部状态栏 -->
 
@@ -43,6 +41,7 @@
 <script setup lang="ts">
 import {ref, computed, onMounted, onUnmounted} from 'vue'
 import {useRoute} from 'vue-router'
+import FooterCC from "@/components/FooterC.vue";
 
 const route = useRoute()
 const splitterModel_1 = ref(8)
@@ -58,48 +57,7 @@ const menuList = [
 // 路由变化自动高亮左侧菜单
 const activeMenu = computed(() => route.path)
 
-// 实时时间
-const nowTime = ref('')
-let timer: number | null = null
-const updateTime = () => {
-  nowTime.value = new Date().toLocaleString('zh-CN', {
-    hour12: false
-  })
-}
 
-// 浏览器UA
-const browserUA = ref(navigator.userAgent)
-
-// 设备类型判断
-const deviceInfo = computed(() => {
-  const ua = navigator.userAgent
-  if (/Android|iPhone|iPad|iPod/i.test(ua)) {
-    return '移动端'
-  }
-  return 'PC端'
-})
-
-// IP地址（前端无法直接获取内网IP，只能获取公网IP，借助公开接口）
-const clientIp = ref('')
-const getIp = async () => {
-  try {
-    const res = await fetch('https://api.ipify.org?format=json')
-    const json = await res.json()
-    clientIp.value = json.ip
-  } catch (err) {
-    clientIp.value = '无法获取'
-  }
-}
-
-onMounted(() => {
-  updateTime()
-  timer = window.setInterval(updateTime, 1000)
-  getIp()
-})
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer)
-})
 </script>
 
 <style lang="scss" scoped>
@@ -125,6 +83,10 @@ onUnmounted(() => {
 
 .HeadC_style {
 
+}
+
+* {
+  user-select: text !important;
 }
 
 :root {
