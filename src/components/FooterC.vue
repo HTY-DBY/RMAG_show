@@ -129,9 +129,11 @@ const browserVer = computed(() => {
   const matchChrome = ua.match(/Chrome\/(\d+)/);
   const matchEdge = ua.match(/Edg\/(\d+)/);
   const matchFirefox = ua.match(/Firefox\/(\d+)/);
-  if (matchEdge) ver = matchEdge[1];
-  else if (matchChrome) ver = matchChrome[1];
-  else if (matchFirefox) ver = matchFirefox[1];
+
+  if (matchEdge) ver = matchEdge?.[1] ?? "";
+  else if (matchChrome) ver = matchChrome?.[1] ?? "";
+  else if (matchFirefox) ver = matchFirefox?.[1] ?? "";
+
   return ver || "未知";
 });
 
@@ -277,7 +279,7 @@ async function getLocalIp() {
     };
     pc.createOffer().then((offer) => pc.setLocalDescription(offer));
   } catch (e) {
-    console.log("禁止获取内网IP");
+    console.log("获取内网IP被禁止");
   }
 }
 
