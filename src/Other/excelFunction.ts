@@ -1,8 +1,6 @@
 import {defineStore} from 'pinia'
 import * as XLSX from 'xlsx'
-
-const data_url = 'https://raw.githubusercontent.com/HTY-DBY/DataSave/refs/heads/main/db_excel.xlsx'
-
+import {RMAG_database_1} from "@/Other/VariableStorage.ts";
 
 export const useExcelStore = defineStore('excel', {
     state: () => ({
@@ -47,7 +45,7 @@ export const useExcelStore = defineStore('excel', {
             try {
                 console.log("【进度】请求文件 db_excel.xlsx");
                 // const res = await fetch(`/db_excel.xlsx?t=${Date.now()}`, {cache: "no-cache"});
-                const url = `${data_url}?t=${Date.now()}`
+                const url = `${RMAG_database_1}?t=${Date.now()}`
                 console.log('请求地址为', url)
                 const res = await fetch(url, {cache: "no-cache"});
                 if (!res.ok) throw new Error(`文件请求失败 ${res.status}`);
