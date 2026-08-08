@@ -14,6 +14,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import {useExcelStore} from '@/Other/excelFunction.ts'
 import DataShowC from "@/components/DataShowC.vue";
+import {useDomStore} from '@/Other/store.ts'
 
 const splitterModel_2 = ref(30)
 delete L.Icon.Default.prototype._getIconUrl
@@ -29,6 +30,7 @@ let map = null
 let clusterGroup = null
 let markerArr = []
 const tipPopup = L.popup({offset: [0, -30]})
+const domStore = useDomStore()
 
 // ===================== 持久化配置 =====================
 const STORAGE_KEY = "map_view_cache"
@@ -141,6 +143,31 @@ watch(
         markerArr.push({m, point})
       })
     }
+)
+// 监听 domStore.RMAG_ID_now 定位点位
+let lastId = null
+watch(
+    () => domStore.RMAG_ID_now,
+    (targetId) => {
+      if (!map || !targetId || markerArr.length === 0 || targetId === lastId) return
+      lastId = targetId
+
+      const targetObj = markerArr.find(item => String(item.point.ID) === String(targetId))
+      if (!targetObj) return
+
+      const point = targetObj.point
+      const lat = Number(point.lat)
+      const lng = Number(point.lng)
+      // 只平移，固定当前缩放，永远不会放大
+      map.panTo([lat, lng], {animate: true})
+
+      // 弹窗固定在目标经纬度
+      tipPopup
+          .setLatLng([lat, lng])
+          .setContent(`ID：${point.ID}<br>经度：${lng}<br>纬度：${lat}`)
+          .openOn(map)
+    },
+    {immediate: true}
 )
 
 watch(
