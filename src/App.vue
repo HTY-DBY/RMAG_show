@@ -42,6 +42,8 @@
 import {ref, computed, onMounted, onUnmounted} from 'vue'
 import {useRoute} from 'vue-router'
 import FooterCC from "@/components/FooterC.vue";
+import {useExcelStore} from "@/Other/excelFunction.ts";
+import {useDomStore} from '@/Other/store.ts'
 
 const route = useRoute()
 const splitterModel_1 = ref(8)
@@ -50,14 +52,19 @@ const splitterModel_1 = ref(8)
 const menuList = [
   {title: 'RmagMainC', path: '/RmagMainC'},
   {title: 'Contact', path: '/ContactMainC'},
-  {title: 'Test2C', path: '/Test2C'},
-  {title: 'Test3C', path: '/Test3C'},
+  {title: 'TestMainC', path: '/TestMainC'},
 ]
 
 // 路由变化自动高亮左侧菜单
 const activeMenu = computed(() => route.path)
+const excelStore = useExcelStore()
+const domStore = useDomStore()
 
 
+onMounted(async () => {
+  await excelStore.refreshExcel()
+  domStore.set_RMAG_database_read_ok_Ref(true)
+})
 </script>
 
 <style lang="scss" scoped>

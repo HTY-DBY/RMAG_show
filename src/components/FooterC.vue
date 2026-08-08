@@ -82,7 +82,19 @@
       <q-separator color="orange" vertical inset/>
 
       <div class="status-item">UA：{{ browserUA ?? '' }}</div>
+
+
     </div>
+
+    <div class="row q-pa-xs status-center">
+      <div class="status-item"> © 2019-现在 hty.ink</div>
+      <q-separator color="orange" vertical inset/>
+
+      <div class="status-item"> 京ICP备2021032418号</div>
+      <!--      <q-separator color="orange" vertical inset/>-->
+
+    </div>
+
   </div>
 </template>
 
@@ -91,6 +103,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.status-center {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.q-separator--vertical) {
@@ -111,7 +130,7 @@
 import {computed, onMounted, onUnmounted, ref} from "vue";
 
 // 1. 实时时间
-const nowTime = ref("");
+const nowTime = ref<string>("");
 let timer: number | null = null;
 const updateTime = () => {
   nowTime.value = new Date().toLocaleString("zh-CN", {
@@ -120,32 +139,36 @@ const updateTime = () => {
 };
 
 // 2. UA
-const browserUA = ref(navigator.userAgent);
+const browserUA = ref<string>(navigator.userAgent);
 
 // 浏览器版本
-const browserVer = computed(() => {
+const browserVer = computed<string>(() => {
   const ua = navigator.userAgent;
   let ver = "";
-  const matchChrome = ua.match(/Chrome\/(\d+)/);
   const matchEdge = ua.match(/Edg\/(\d+)/);
+  const matchChrome = ua.match(/Chrome\/(\d+)/);
   const matchFirefox = ua.match(/Firefox\/(\d+)/);
 
-  if (matchEdge) ver = matchEdge?.[1] ?? "";
-  else if (matchChrome) ver = matchChrome?.[1] ?? "";
-  else if (matchFirefox) ver = matchFirefox?.[1] ?? "";
+  if (matchEdge !== null && Array.isArray(matchEdge) && matchEdge[1]) {
+    ver = matchEdge[1];
+  } else if (matchChrome !== null && Array.isArray(matchChrome) && matchChrome[1]) {
+    ver = matchChrome[1];
+  } else if (matchFirefox !== null && Array.isArray(matchFirefox) && matchFirefox[1]) {
+    ver = matchFirefox[1];
+  }
 
   return ver || "未知";
 });
 
 // 3. 设备：PC/移动端
-const deviceInfo = computed(() => {
+const deviceInfo = computed<string>(() => {
   const ua = navigator.userAgent;
   if (/Android|iPhone|iPad|iPod/i.test(ua)) return "移动端";
   return "PC端";
 });
 
 // 4. 系统识别
-const systemInfo = computed(() => {
+const systemInfo = computed<string>(() => {
   const ua = navigator.userAgent;
   if (ua.includes("Win11")) return "Windows 11";
   if (ua.includes("Windows NT 10.0")) return "Windows 10";
@@ -160,10 +183,10 @@ const systemInfo = computed(() => {
 });
 
 // 系统位数
-const osBit = computed(() => navigator.platform.includes("Win64") ? "64位" : "32位");
+const osBit = computed<string>(() => navigator.platform.includes("Win64") ? "64位" : "32位");
 
 // 5. 浏览器识别
-const browserInfo = computed(() => {
+const browserInfo = computed<string>(() => {
   const ua = navigator.userAgent;
   if (ua.includes("Edg")) return "Edge";
   if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome";
@@ -176,8 +199,8 @@ const browserInfo = computed(() => {
 });
 
 // 6. 公网IP
-const clientIp = ref("");
-const ipArea = ref("获取中");
+const clientIp = ref<string>("");
+const ipArea = ref<string>("获取中");
 const getIpAndLocation = async () => {
   try {
     const res = await fetch(`https://ipapi.co/json/`);
@@ -200,23 +223,31 @@ const getIpAndLocation = async () => {
 };
 
 // 7. 屏幕尺寸、可视区域
-const screenInfo = ref(`${window.screen.width} × ${window.screen.height}`);
-const viewSize = ref(`${document.documentElement.clientWidth} × ${document.documentElement.clientHeight}`);
+const screenInfo = ref<string>(`${window.screen.width} × ${window.screen.height}`);
+const viewSize = ref<string>(`${document.documentElement.clientWidth} × ${document.documentElement.clientHeight}`);
 
 // 8. 内存、CPU
-const memoryInfo = ref("不支持读取");
-const cpuCore = ref(String(navigator.hardwareConcurrency) + "核");
+const memoryInfo = ref<string>("不支持读取");
+const cpuCore = ref<string>(String(navigator.hardwareConcurrency) + "核");
 
 // 9. 时区、语言
-const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
-const lang = ref(navigator.language);
+const timeZone = ref<string>(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const lang = ref<string>(navigator.language);
 
-// 网络信息
-const connection = (navigator as any).connection || {};
-const netType = ref(connection.effectiveType || "未知");
-const netRtt = ref(String(connection.rtt ?? "--"));
+// 网络信息类型补充
+interface NetworkInformation {
+  effectiveType?: string
+  rtt?: number
+  addEventListener?: (type: string, cb: () => void) => void
+  removeEventListener?: (type: string, cb: () => void) => void
+}
+
+const connection = (navigator as { connection?: NetworkInformation }).connection || {};
+const netType = ref<string>(connection.effectiveType || "未知");
+const netRtt = ref<string>(String(connection.rtt ?? "--"));
+
 // 实时测速延迟
-const realPing = ref("--");
+const realPing = ref<string>("--");
 let pingTimer: number | null = null;
 
 // 测速方法
@@ -235,53 +266,34 @@ const testPing = async () => {
 };
 
 // 深色模式
-const darkMode = computed(() => window.matchMedia("(prefers-color-scheme: dark)").matches ? "开启" : "关闭");
+const darkMode = computed<string>(() => window.matchMedia("(prefers-color-scheme: dark)").matches ? "开启" : "关闭");
 
 // 是否触屏
-const isTouch = computed(() => "ontouchstart" in window ? "是" : "否");
+const isTouch = computed<string>(() => "ontouchstart" in window ? "是" : "否");
 
 // 域名、协议、编码
-const host = ref(location.hostname);
-const protocol = ref(location.protocol);
-const charset = ref(document.characterSet);
+const host = ref<string>(location.hostname);
+const protocol = ref<string>(location.protocol);
+const charset = ref<string>(document.characterSet);
 
 // 设备像素比
-const devicePixelRatio = ref(String(window.devicePixelRatio));
+const devicePixelRatio = ref<string>(String(window.devicePixelRatio));
 
 // 最大触控点数、平台架构
-const maxTouchPoints = ref(String(navigator.maxTouchPoints));
-const platform = ref(navigator.platform);
+const maxTouchPoints = ref<string>(String(navigator.maxTouchPoints));
+const platform = ref<string>(navigator.platform);
 
 // 网络在线状态
-const isOnline = computed(() => navigator.onLine ? "在线" : "离线");
+const isOnline = computed<string>(() => navigator.onLine ? "在线" : "离线");
 
 // 获取内存
 const getMemory = () => {
-  // @ts-ignore
-  if (navigator.deviceMemory !== undefined) {
-    // @ts-ignore
-    memoryInfo.value = navigator.deviceMemory + " GB";
+  const nav = navigator as { deviceMemory?: number }
+  if (nav.deviceMemory !== undefined) {
+    memoryInfo.value = nav.deviceMemory + " GB";
   }
 };
 
-// 内网IP（仅控制台打印，页面不展示）
-async function getLocalIp() {
-  try {
-    const pc = new RTCPeerConnection({iceServers: []});
-    pc.createDataChannel("");
-    pc.onicecandidate = (e) => {
-      if (!e.candidate) return;
-      const ipMatch = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(e.candidate.candidate);
-      if (ipMatch) {
-        console.log("内网IP：", ipMatch[0]);
-      }
-      pc.close();
-    };
-    pc.createOffer().then((offer) => pc.setLocalDescription(offer));
-  } catch (e) {
-    console.log("获取内网IP被禁止");
-  }
-}
 
 // 窗口 resize 监听
 const handleResize = () => {
@@ -291,7 +303,7 @@ const handleResize = () => {
 
 // 网络变化监听
 const handleNetChange = () => {
-  const conn = (navigator as any).connection;
+  const conn = (navigator as { connection?: NetworkInformation }).connection;
   netType.value = conn?.effectiveType || "未知";
   netRtt.value = String(conn?.rtt ?? "--");
 };
@@ -301,11 +313,10 @@ onMounted(() => {
   timer = window.setInterval(updateTime, 1000);
   getIpAndLocation();
   getMemory();
-  getLocalIp();
 
-  // 开启实时测速，2秒刷新一次延迟
+  // 刷新延迟
   testPing();
-  pingTimer = window.setInterval(testPing, 2000);
+  pingTimer = window.setInterval(testPing, 5000);
 
   window.addEventListener("resize", handleResize);
   connection.addEventListener?.("change", handleNetChange);

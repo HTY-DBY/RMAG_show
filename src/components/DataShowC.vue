@@ -2,7 +2,7 @@
   <div class="row row-cols-3">
     <!--   ////////////////-->
     <div class="col">
-      Loding
+      Data was updated on Jnly 20 2001.
     </div>
     <!--   ////////////////-->
     <q-input
@@ -29,7 +29,7 @@
     <q-table
         selection="single"
         v-model:selected="selected"
-        :loading="loading"
+        :loading=!domStore.RMAG_database_read_ok
         dense
         flat
         bordered
@@ -44,21 +44,25 @@
   </div>
 
   <div class="row">
-    Data was updated on Jnly 20 2001.
+
+    xxxxxx
   </div>
 
 
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, computed, ref} from 'vue'
+import {onMounted, onUnmounted, computed, ref, watch} from 'vue'
 import {useExcelStore} from '@/Other/excelFunction.ts'
+import {useDomStore} from '@/Other/store.ts'
 
 const text = ref('')
 const excelStore = useExcelStore()
 const selected = ref([])
 const btnWrapRef = ref(null)
 const loading = ref(false)
+
+const domStore = useDomStore()
 
 const originList = computed(() => excelStore.pointList || [])
 
@@ -75,6 +79,19 @@ const tableData = computed(() => {
     })
   })
 })
+
+
+watch(selected, (newVal) => {
+  if (newVal.length > 0) {
+    const selectRow = newVal[0]
+    // 将选中行的ID传入pinia
+    domStore.set_RMAG_ID_now_Ref(selectRow.ID)
+  } else {
+    // 未选中清空
+    // domStore.set_RMAG_ID_now_Ref(null)
+  }
+}, {deep: true})
+
 
 const columns = [
   {
